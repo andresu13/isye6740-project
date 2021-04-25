@@ -4,18 +4,12 @@ import logistic_model
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn import preprocessing
 
 
 def main():
     np.random.seed(30)
     stock_df = pd.read_csv("sample_stock_data.csv")
-
-    #Standardizing Data
-    scaler = preprocessing.StandardScaler()
-    X = scaler.fit_transform(stock_df.iloc[:,1:-1])
-
-    X_train, X_test, y_train, y_test = train_test_split(X,stock_df.iloc[:,-1], test_size=0.8)
+    X_train, X_test, y_train, y_test = train_test_split(stock_df.iloc[:,0:-1],stock_df.iloc[:,-1], test_size=0.8)
     #print(X_train)
     print(X_train.head())
 
