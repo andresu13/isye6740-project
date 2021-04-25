@@ -1,0 +1,7 @@
+- Removed empty records GOOG, CARR, CTVA, DISCK, FRC, LUMN, NWS, OTIS, UA, VTRS
+- Added binary variable to identify if RD investment is missing or not 
+- earningsPerBasicShare has blanks on DOW and FOXA
+- priceSales has blanks on DOW, FOXA and AMCR
+- Labels missing for DOW, FOXA and AMCR
+
+Safest choice for the analysis is to delete the three records
