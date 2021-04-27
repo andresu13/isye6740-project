@@ -14,6 +14,17 @@ def build_model(X_train, X_test, y_train, y_test ):
     print("Logistic Model")
     # Your Code goes here
 
+    X_train = X_train.iloc[:,1:]
+    X_test = X_test.iloc[:,1:]
+
+    num_cols = X_train.columns
+
+    
+    for i in num_cols:
+        scale = preprocessing.StandardScaler().fit(X_train[[i]])
+        X_train[i] = scale.transform(X_train[[i]])
+        X_test[i] = scale.transform(X_test[[i]])
+
     print()
     print('BASE MODEL RESULTS:')
     lr = LogisticRegression().fit(X_train, y_train)
@@ -165,15 +176,16 @@ if __name__ == "__main__":
     np.random.seed(30)
     stock_df = pd.read_csv("sample_stock_data.csv")
 
-
+    '''
     scaler = preprocessing.StandardScaler()
     X = scaler.fit_transform(stock_df.iloc[:,1:-1])
+    '''
 
     '''
     norm = np.linalg.norm(stock_df.iloc[:,1:-1])
     X =(stock_df.iloc[:,1:-1]-stock_df.iloc[:,1:-1].mean())/norm
     '''
 
-    X_train, X_test, y_train, y_test = train_test_split(X,stock_df.iloc[:,-1], test_size=0.8)
+    X_train, X_test, y_train, y_test = train_test_split(stock_df.iloc[:,0:-1],stock_df.iloc[:,-1], test_size=0.2)
 
     build_model(X_train, X_test, y_train, y_test)
