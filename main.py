@@ -12,7 +12,8 @@ def main():
     stock_df = pd.read_csv("sample_stock_data.csv")
     stock_df = stock_df.drop("priceSales", axis=1)
     X_train, X_test, y_train, y_test = train_test_split(stock_df.iloc[:,0:-1],stock_df.iloc[:,-1], test_size=0.2)
-    #print(X_train)
+    print(X_train)
+    print(y_train)
 
     ### These 3 lines will be called once the models are built
     ### Expected API Return: Accuracy, Recall, F1 Score
@@ -27,6 +28,7 @@ def main():
 
 
     ### CALCULATE FINAL ACCURACY BASED ON PREDICTIONS FROM ALL MODELS
+    print(neural_y_predict)
     print("BAGGING MODEL ACCURACY", accuracy_score(y_test, neural_y_predict))
 
 
