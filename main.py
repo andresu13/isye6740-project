@@ -1,4 +1,4 @@
-import logistic_model
+import logistic_model as lm
 import neural_model as nm
 #import svm_model
 import pandas as pd
@@ -26,10 +26,17 @@ def main():
     neural_ml.build_model()
     neural_y_predict = neural_ml.predict(X_test)
 
+    np.random.seed(167)
+    X_train, X_test_lm, y_train, y_test = train_test_split(stock_df.iloc[:,0:-1],stock_df.iloc[:,-1], test_size=0.2)
+    logistic_ml = lm.LogisticModel(X_train, X_test_lm, y_train, y_test)
+    logistic_ml.build_model()
+    logistic_y_predict = logistic_ml.predict(X_test)
+
 
     ### CALCULATE FINAL ACCURACY BASED ON PREDICTIONS FROM ALL MODELS
-    print(neural_y_predict)
-    print("BAGGING MODEL ACCURACY", accuracy_score(y_test, neural_y_predict))
+    #print(neural_y_predict)
+    print(logistic_y_predict)
+    #print("BAGGING MODEL ACCURACY", accuracy_score(y_test, neural_y_predict))
 
 
 
