@@ -93,7 +93,7 @@ class svm(object):
         print("SVM MODEL")
 
         # Original Data
-        print('Original Data')
+        print('### Original Data ###')
         best_params = self.build_model_local(X_train1, X_test1, y_train, y_test)
 
         # Normalize data
