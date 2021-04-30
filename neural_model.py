@@ -7,6 +7,8 @@ from sklearn.metrics import confusion_matrix
 from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold
+from sklearn import metrics
+from matplotlib import pyplot as plt
 
 class NeuralModel(object):  	
 
@@ -34,20 +36,21 @@ class NeuralModel(object):
         #Remove the first column from X_train and X_test
         X_train = X_train.iloc[:,1:]
         X_test = X_test.iloc[:,1:]
-        self.num_cols = X_train.drop("RD_missing", axis=1).columns
+        self.num_cols = X_train.drop("RD", axis=1).columns
 
         print("NEURAL MODEL")
 
         ### Standardize/Normalize data before passing it to the Neural Network algorithm
 
-        ### Normalization
-        norm = MinMaxScaler().fit(X_train)
-        X_train_norm = norm.transform(X_train)
-        X_test_norm = norm.transform(X_test)
+        if self.verbose == True:
+            ### Normalization
+            norm = MinMaxScaler().fit(X_train)
+            X_train_norm = norm.transform(X_train)
+            X_test_norm = norm.transform(X_test)
 
-        pca_norm = PCA(n_components=10)
-        X_pca_train_norm = pca_norm.fit_transform(X_train_norm)
-        X_pca_test_norm = pca_norm.transform(X_test_norm)
+            pca_norm = PCA(n_components=10)
+            X_pca_train_norm = pca_norm.fit_transform(X_train_norm)
+            X_pca_test_norm = pca_norm.transform(X_test_norm)
 
         ### Standardization
 
@@ -65,36 +68,55 @@ class NeuralModel(object):
 
         #### Run Neural Networks Classifier
 
-        # Build model without any normalization/standardization
-        clf_norm = MLPClassifier()
-        clf_norm.fit(X_train, y_train)
-        y_pred = clf_norm.predict(X_test)
-        print("Accuracy Score (NO Normalization/Standardization): ", accuracy_score(y_test, y_pred))
-        
-        # Build Neural Network with Normalized Data
-        clf_norm = MLPClassifier()
-        clf_norm.fit(X_train_norm, y_train)
-        y_pred_norm = clf_norm.predict(X_test_norm)
-        print("Accuracy Score (Normalized): ", accuracy_score(y_test, y_pred_norm))
+        if self.verbose == True:
+            # Build model without any normalization/standardization
+            clf_norm = MLPClassifier()
+            clf_norm.fit(X_train, y_train)
+            y_pred = clf_norm.predict(X_test)
+            print("Accuracy Score (NO Normalization/Standardization): ", accuracy_score(y_test, y_pred))
+            
+            # Build Neural Network with Normalized Data
+            clf_norm = MLPClassifier()
+            clf_norm.fit(X_train_norm, y_train)
+            y_pred_norm = clf_norm.predict(X_test_norm)
+            print("Accuracy Score (Normalized): ", accuracy_score(y_test, y_pred_norm))
 
-        # Build Neural Network with Normalized Data (after PCA)
-        clf_pca_norm = MLPClassifier()
-        clf_pca_norm.fit(X_pca_train_norm, y_train)
-        y_pred_pca_norm = clf_pca_norm.predict(X_pca_test_norm)
-        print("Accuracy Score (Normalized and PCA): ", accuracy_score(y_test, y_pred_pca_norm))
+            # Build Neural Network with Normalized Data (after PCA)
+            clf_pca_norm = MLPClassifier()
+            clf_pca_norm.fit(X_pca_train_norm, y_train)
+            y_pred_pca_norm = clf_pca_norm.predict(X_pca_test_norm)
+            print("Accuracy Score (Normalized and PCA): ", accuracy_score(y_test, y_pred_pca_norm))
 
-        # Build Neural Network with Standardized Data
-        clf_stand = MLPClassifier()
-        clf_stand.fit(X_train_stand, y_train)
-        y_pred_stand = clf_stand.predict(X_test_stand)
-        print("Accuracy Score (Standardized): ", accuracy_score(y_test, y_pred_stand))
+            # Build Neural Network with Standardized Data
+            clf_stand = MLPClassifier()
+            clf_stand.fit(X_train_stand, y_train)
+            y_pred_stand = clf_stand.predict(X_test_stand)
+            print("Accuracy Score (Standardized): ", accuracy_score(y_test, y_pred_stand))
 
-        # Build Neural Network with Standardized Data (after PCA)
-        clf_pca_stand = MLPClassifier()
-        clf_pca_stand.fit(X_pca_train_stand, y_train)
-        y_pred_pca_stand = clf_pca_stand.predict(X_pca_test_stand)
-        print("Accuracy Score (Standardized and PCA): ", accuracy_score(y_test, y_pred_pca_stand))
+            # Build Neural Network with Standardized Data (after PCA)
+            clf_pca_stand = MLPClassifier()
+            clf_pca_stand.fit(X_pca_train_stand, y_train)
+            y_pred_pca_stand = clf_pca_stand.predict(X_pca_test_stand)
+            print("Accuracy Score (Standardized and PCA): ", accuracy_score(y_test, y_pred_pca_stand))
 
+
+        ### 
+
+
+            #alphas = np.arange(0.00001, 1, 0.5)
+            alphas = [0,0.0001,0.0005, 0.0007,0.0008,0.0009,0.001, 0.002,0.003,0.004,0.005, 0.1, 0.5,1,1.5,3,5,10]
+            accuracies = []
+            for a in alphas:
+                neural_model = MLPClassifier(alpha=a)
+                neural_model.fit(X_pca_train_stand,y_train)
+                y_pred= neural_model.predict(X_pca_test_stand)
+                accuracies.append(accuracy_score(y_test, y_pred))
+            plt.figure()
+            plt.plot(alphas,accuracies)
+            plt.title("Neural Model: Alpha vs Accuracy")
+            plt.xlabel("Alphas")
+            plt.ylabel("Accuracy")
+            plt.savefig("Neural_Model_Curve.png")
 
 
         ### Model Optimization
@@ -119,10 +141,15 @@ class NeuralModel(object):
         grid_search = GridSearchCV(clf_gs, parameters, n_jobs=-1, cv=kfolds, scoring='accuracy', error_score=0)
         self.neural_model = grid_search.fit(X_pca_train_stand,y_train)
 
-        print("Best: %f using %s" % (self.neural_model.best_score_, self.neural_model.best_params_))
+        if self.verbose == True:
+            print("Best: %f using %s" % (self.neural_model.best_score_, self.neural_model.best_params_))
 
-        y_pred_grid_model = self.neural_model.predict(X_pca_test_stand)
-        print("Accuracy Score (after Grid Search): ", accuracy_score(y_test, y_pred_grid_model))
+            y_pred_grid_model = self.neural_model.predict(X_pca_test_stand)
+            print("Accuracy Score (after Grid Search): ", accuracy_score(y_test, y_pred_grid_model))
+
+            print(confusion_matrix(y_test, y_pred_grid_model))
+            metrics.plot_confusion_matrix(grid_search, X_pca_test_stand, y_test)
+            plt.savefig("Neural_Confusion_Matrix")
 
     def predict(self, X_test):
         X_test = X_test.iloc[:,1:]
