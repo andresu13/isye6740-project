@@ -30,11 +30,5 @@ def main():
 
     print("BAGGING MODEL ACCURACY", accuracy_score(y_test, bag_y_predict))
 
-    #test_lm = lm.LogisticModel(X_train, X_test, y_train, y_test, verbose=True)
-    #test_lm.build_model()
-
-    #test_nm = nm.NeuralModel(X_train, X_test, y_train, y_test, verbose=True)
-    #test_nm.build_model()
-
 if __name__ == "__main__":
     main()
