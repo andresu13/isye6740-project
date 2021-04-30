@@ -6,6 +6,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report
 from sklearn.model_selection import KFold
 from sklearn import metrics
 from matplotlib import pyplot as plt
@@ -150,6 +151,8 @@ class NeuralModel(object):
             print(confusion_matrix(y_test, y_pred_grid_model))
             metrics.plot_confusion_matrix(grid_search, X_pca_test_stand, y_test)
             plt.savefig("Neural_Confusion_Matrix")
+
+            print(classification_report(y_test, y_pred_grid_model))
 
     def predict(self, X_test):
         X_test = X_test.iloc[:,1:]
