@@ -42,6 +42,8 @@ class svm(object):
             print(metrics.classification_report(y_test, grid_predictions))
             print(metrics.confusion_matrix(y_test, grid_predictions))
             best_params = self.svm.best_params_
+            metrics.plot_confusion_matrix(self.svm, X_test, y_test)
+            plt.savefig("SVM_Confusion_Matrix")
         if safe == False:
             grid = GridSearchCV(SVC(), param_grid, refit = True, verbose = 0,scoring='accuracy')
             grid.fit(X_train, y_train)
