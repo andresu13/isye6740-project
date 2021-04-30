@@ -93,14 +93,17 @@ class svm(object):
         print("SVM MODEL")
 
         # Original Data
+        print('Original Data')
         best_params = self.build_model_local(X_train1, X_test1, y_train, y_test)
 
         # Normalize data
+        print('### Normalize Data ###')
         X_train1A = (X_train1-X_train1.min())/(X_train1.max()-X_train1.min())
         X_test1A = (X_test1-X_train1.min())/(X_train1.max()-X_train1.min())
         best_params_norm = self.build_model_local(X_train1A, X_test1A, y_train, y_test,safe=True)
 
         # Standararize data
+        print('### Standarize Data ###')
         X_train1B = (X_train1-X_train1.mean())/X_train1.std()
         X_test1B = (X_test1-X_train1.mean())/X_train1.std()
         best_params_norm = self.build_model_local(X_train1B, X_test1B, y_train, y_test)
@@ -132,7 +135,7 @@ class svm(object):
 
         if self.verbose == True:
             # PCA with 3 components 
-            print('PCA with 3 components')
+            print('### PCA with 3 components ###')
             pca = PCA(n_components=4)
             X_pca_train = pca.fit_transform(X_train1B)
             X_pca_test = pca.transform(X_test1B)
