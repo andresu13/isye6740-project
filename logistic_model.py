@@ -13,11 +13,12 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import plot_confusion_matrix
 
 class LogisticModel(object):
 
     # Define constructor
-    def __init__(self, X_train, X_test, y_train, y_test, verbose = False):
+    def __init__(self, X_train, X_test, y_train, y_test, verbose = True):
             #self.leaf_size = leaf_size
             self.verbose = verbose
             self.X_train = X_train
@@ -174,7 +175,7 @@ class LogisticModel(object):
             print('  >>Hyperparameter tuning with Lasso Regression on Test Data')
             print()
 
-            lasso_alphas = [0.001,0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,2,3,4,5,6,7,8,9,10,20,50]
+            lasso_alphas = [0.001,0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,2,5]
 
             lasso_acc = []
             w = []
@@ -269,6 +270,8 @@ class LogisticModel(object):
             print()
             print("Confusion matrix")
             print(confusion_matrix(y_test, y_pred_model))
+            plot_confusion_matrix(self.logistic_model, X_test_stand, y_test)
+            plt.show()
             print()
 
     def predict(self, X_test):
